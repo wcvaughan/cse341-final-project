@@ -1,5 +1,4 @@
 const express = require('express');
-const { requiresAuth } = require('express-openid-connect');
 const {
   getAll,
   getSingle,
@@ -7,11 +6,14 @@ const {
   updateUser,
   deleteUser
 } = require('../controllers/users');
+
 const {
   validateUser,
   validateId,
   handleValidationErrors
 } = require('../middleware/validation');
+
+const { isAuthenticated } = require('../middleware/authenticate');
 
 const router = express.Router();
 
@@ -28,6 +30,8 @@ const router = express.Router();
  *   post:
  *     summary: Register a new user
  *     tags: [Users]
+ *     security:
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -41,19 +45,25 @@ const router = express.Router();
  *             properties:
  *               name:
  *                 type: string
+ *                 example: John Doe
  *               email:
  *                 type: string
+ *                 format: email
+ *                 example: john@example.com
  *               password:
  *                 type: string
+ *                 example: myStrongP@ssword
  *               role:
  *                 type: string
+ *                 example: user
  *               address:
  *                 type: string
+ *                 example: 456 Elm Street
  *     responses:
  *       201:
  *         description: User created
  */
-router.post('/', requiresAuth(), validateUser, handleValidationErrors, registerUser);
+router.post('/', isAuthenticated, validateUser, handleValidationErrors, registerUser);
 
 /**
  * @swagger
@@ -71,7 +81,7 @@ router.post('/', requiresAuth(), validateUser, handleValidationErrors, registerU
  *       200:
  *         description: User found
  */
-router.get('/:userId', requiresAuth(), validateId, handleValidationErrors, getSingle);
+router.get('/:userId', validateId, handleValidationErrors, getSingle);
 
 /**
  * @swagger
@@ -91,6 +101,8 @@ router.get('/', getAll);
  *   put:
  *     summary: Update user details by ID
  *     tags: [Users]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: userId
@@ -103,20 +115,28 @@ router.get('/', getAll);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - email
  *             properties:
  *               name:
  *                 type: string
+ *                 example: Jane Doe
  *               email:
  *                 type: string
+ *                 format: email
+ *                 example: jane@example.com
  *               password:
  *                 type: string
+ *                 example: updatedP@ss
  *               address:
  *                 type: string
+ *                 example: 789 Maple Avenue
  *     responses:
  *       200:
  *         description: User updated
  */
-router.put('/:userId', requiresAuth(), validateId, validateUser, handleValidationErrors, updateUser);
+router.put('/:userId', isAuthenticated, validateId, validateUser, handleValidationErrors, updateUser);
 
 /**
  * @swagger
@@ -124,6 +144,8 @@ router.put('/:userId', requiresAuth(), validateId, validateUser, handleValidatio
  *   delete:
  *     summary: Delete a user
  *     tags: [Users]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: userId
@@ -134,6 +156,6 @@ router.put('/:userId', requiresAuth(), validateId, validateUser, handleValidatio
  *       200:
  *         description: User deleted
  */
-router.delete('/:userId', requiresAuth(), validateId, handleValidationErrors, deleteUser);
+router.delete('/:userId', isAuthenticated, validateId, handleValidationErrors, deleteUser);
 
 module.exports = router;

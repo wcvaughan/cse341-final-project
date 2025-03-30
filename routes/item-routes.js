@@ -7,6 +7,7 @@ const {
   getItemById,
   deleteItem
 } = require('../controllers/items');
+const { isAuthenticated } = require('../middleware/authenticate');
 
 /**
  * @swagger
@@ -51,6 +52,8 @@ router.get('/:itemId', getItemById);
  *   post:
  *     summary: Create a new item
  *     tags: [Items]
+ *     security:
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -66,20 +69,31 @@ router.get('/:itemId', getItemById);
  *             properties:
  *               name:
  *                 type: string
+ *                 example: Apple
  *               category:
  *                 type: string
+ *                 example: Fruit
  *               price:
  *                 type: number
+ *                 example: 0.99
+ *                 minimum: 0
  *               stock:
  *                 type: integer
+ *                 example: 100
+ *                 minimum: 0
  *               storeId:
  *                 type: string
+ *                 example: 641234abcde123456789abcd
  *               description:
  *                 type: string
+ *                 example: Fresh and juicy apples
  *               isOnSale:
  *                 type: boolean
+ *                 example: false
  *               imageUrl:
  *                 type: string
+ *                 format: uri
+ *                 example: https://example.com/images/apple.jpg
  *               createdAt:
  *                 type: string
  *                 format: date-time
@@ -87,7 +101,7 @@ router.get('/:itemId', getItemById);
  *       201:
  *         description: Item created
  */
-router.post('/', createItem);
+router.post('/', isAuthenticated, createItem);
 
 /**
  * @swagger
@@ -95,6 +109,8 @@ router.post('/', createItem);
  *   put:
  *     summary: Update an item by ID
  *     tags: [Items]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: itemId
@@ -110,25 +126,36 @@ router.post('/', createItem);
  *             properties:
  *               name:
  *                 type: string
+ *                 example: Apple
  *               category:
  *                 type: string
+ *                 example: Fruit
  *               price:
  *                 type: number
+ *                 example: 0.99
+ *                 minimum: 0
  *               stock:
  *                 type: integer
+ *                 example: 100
+ *                 minimum: 0
  *               storeId:
  *                 type: string
+ *                 example: 641234abcde123456789abcd
  *               description:
  *                 type: string
+ *                 example: Fresh and juicy apples
  *               isOnSale:
  *                 type: boolean
+ *                 example: false
  *               imageUrl:
  *                 type: string
+ *                 format: uri
+ *                 example: https://example.com/images/apple.jpg
  *     responses:
  *       200:
  *         description: Item updated
  */
-router.put('/:itemId', updateItem);
+router.put('/:itemId', isAuthenticated, updateItem);
 
 /**
  * @swagger
@@ -136,6 +163,8 @@ router.put('/:itemId', updateItem);
  *   delete:
  *     summary: Delete an item
  *     tags: [Items]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: itemId
@@ -146,6 +175,6 @@ router.put('/:itemId', updateItem);
  *       200:
  *         description: Item deleted
  */
-router.delete('/:itemId', deleteItem);
+router.delete('/:itemId', isAuthenticated, deleteItem);
 
 module.exports = router;

@@ -8,6 +8,8 @@ const {
   deleteStore
 } = require('../controllers/stores');
 
+const { isAuthenticated } = require('../middleware/authenticate');
+
 /**
  * @swagger
  * tags:
@@ -51,6 +53,8 @@ router.get('/:storeId', getStoreById);
  *   post:
  *     summary: Create a new store
  *     tags: [Stores]
+ *     security:
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -63,23 +67,30 @@ router.get('/:storeId', getStoreById);
  *             properties:
  *               name:
  *                 type: string
+ *                 example: Main Street Market
  *               location:
  *                 type: string
+ *                 example: 123 Main St, Springfield
  *               hours:
  *                 type: string
+ *                 example: Mon-Fri 8am-6pm
  *               manager:
  *                 type: string
+ *                 example: Jane Doe
  *               contact:
  *                 type: string
+ *                 example: 555-1234
  *               inventoryCount:
  *                 type: integer
+ *                 example: 100
  *               status:
  *                 type: string
+ *                 example: open
  *     responses:
  *       201:
  *         description: Store created
  */
-router.post('/', createStore);
+router.post('/', isAuthenticated, createStore);
 
 /**
  * @swagger
@@ -87,6 +98,8 @@ router.post('/', createStore);
  *   put:
  *     summary: Update a store by ID
  *     tags: [Stores]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: storeId
@@ -102,23 +115,30 @@ router.post('/', createStore);
  *             properties:
  *               name:
  *                 type: string
+ *                 example: Main Street Market
  *               location:
  *                 type: string
+ *                 example: 123 Main St, Springfield
  *               hours:
  *                 type: string
+ *                 example: Mon-Fri 8am-6pm
  *               manager:
  *                 type: string
+ *                 example: Jane Doe
  *               contact:
  *                 type: string
+ *                 example: 555-1234
  *               inventoryCount:
  *                 type: integer
+ *                 example: 100
  *               status:
  *                 type: string
+ *                 example: open
  *     responses:
  *       200:
  *         description: Store updated
  */
-router.put('/:storeId', updateStore);
+router.put('/:storeId', isAuthenticated, updateStore);
 
 /**
  * @swagger
@@ -126,6 +146,8 @@ router.put('/:storeId', updateStore);
  *   delete:
  *     summary: Delete a store
  *     tags: [Stores]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: storeId
@@ -136,6 +158,6 @@ router.put('/:storeId', updateStore);
  *       200:
  *         description: Store deleted
  */
-router.delete('/:storeId', deleteStore);
+router.delete('/:storeId', isAuthenticated, deleteStore);
 
 module.exports = router;

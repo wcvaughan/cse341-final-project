@@ -1,5 +1,4 @@
 const express = require('express');
-const { requiresAuth } = require('express-openid-connect');
 const {
   getAll,
   getSingle,
@@ -16,6 +15,8 @@ const {
   handleValidationErrors
 } = require('../middleware/validation');
 
+const { isAuthenticated } = require('../middleware/authenticate');
+
 const router = express.Router();
 
 /**
@@ -31,6 +32,8 @@ const router = express.Router();
  *   post:
  *     summary: Create a new order
  *     tags: [Orders]
+ *     security:
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -45,16 +48,30 @@ const router = express.Router();
  *             properties:
  *               userId:
  *                 type: string
+ *                 example: 64e5a730cc6cfc6f91a1fabc
  *               storeId:
  *                 type: string
+ *                 example: 64e5a730cc6cfc6f91a1f123
  *               items:
  *                 type: array
  *                 items:
  *                   type: object
+ *                   properties:
+ *                     itemId:
+ *                       type: string
+ *                     quantity:
+ *                       type: integer
+ *                       minimum: 1
+ *                   required:
+ *                     - itemId
+ *                     - quantity
  *               totalPrice:
  *                 type: number
+ *                 minimum: 0
+ *                 example: 39.99
  *               status:
  *                 type: string
+ *                 example: pending
  *               createdAt:
  *                 type: string
  *                 format: date-time
@@ -62,7 +79,7 @@ const router = express.Router();
  *       201:
  *         description: Order created
  */
-router.post('/', requiresAuth(), validateOrder, handleValidationErrors, createOrder);
+router.post('/', isAuthenticated, validateOrder, handleValidationErrors, createOrder);
 
 /**
  * @swagger
@@ -80,7 +97,7 @@ router.post('/', requiresAuth(), validateOrder, handleValidationErrors, createOr
  *       200:
  *         description: Order found
  */
-router.get('/:orderId', requiresAuth(), validateId, handleValidationErrors, getSingle);
+router.get('/:orderId', validateId, handleValidationErrors, getSingle);
 
 /**
  * @swagger
@@ -110,7 +127,7 @@ router.get('/', getAll);
  *       200:
  *         description: Orders found
  */
-router.get('/user/:userId', requiresAuth(), validateId, handleValidationErrors, getOrdersByUser);
+router.get('/user/:userId', validateId, handleValidationErrors, getOrdersByUser);
 
 /**
  * @swagger
@@ -118,6 +135,8 @@ router.get('/user/:userId', requiresAuth(), validateId, handleValidationErrors, 
  *   put:
  *     summary: Update an order by ID
  *     tags: [Orders]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: orderId
@@ -130,14 +149,17 @@ router.get('/user/:userId', requiresAuth(), validateId, handleValidationErrors, 
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - status
  *             properties:
  *               status:
  *                 type: string
+ *                 example: shipped
  *     responses:
  *       200:
  *         description: Order updated
  */
-router.put('/:orderId', requiresAuth(), validateId, validateUser, handleValidationErrors, updateOrder);
+router.put('/:orderId', isAuthenticated, validateId, validateUser, handleValidationErrors, updateOrder);
 
 /**
  * @swagger
@@ -145,6 +167,8 @@ router.put('/:orderId', requiresAuth(), validateId, validateUser, handleValidati
  *   delete:
  *     summary: Delete an order
  *     tags: [Orders]
+ *     security:
+ *       - cookieAuth: []
  *     parameters:
  *       - in: path
  *         name: orderId
@@ -155,6 +179,6 @@ router.put('/:orderId', requiresAuth(), validateId, validateUser, handleValidati
  *       200:
  *         description: Order deleted
  */
-router.delete('/:orderId', requiresAuth(), validateId, handleValidationErrors, deleteOrder);
+router.delete('/:orderId', isAuthenticated, validateId, handleValidationErrors, deleteOrder);
 
 module.exports = router;

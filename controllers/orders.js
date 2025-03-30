@@ -6,7 +6,28 @@ const ObjectId = require('mongodb').ObjectId;
 const createOrder = async (req, res) => {
   //#swagger.tags=['Orders']
   try {
-    const result = await mongodb.getDb().collection('orders').insertOne(req.body);
+    const { userId, storeId, items, totalPrice, status } = req.body;
+
+    if (
+      typeof userId !== 'string' ||
+      typeof storeId !== 'string' ||
+      !Array.isArray(items) ||
+      typeof totalPrice !== 'number' ||
+      typeof status !== 'string'
+    ) {
+      return res.status(400).json({ error: 'Missing or invalid order fields' });
+    }
+
+    const newOrder = {
+      userId,
+      storeId,
+      items,
+      totalPrice,
+      status,
+      createdAt: new Date()
+    };
+
+    const result = await mongodb.getDb().collection('orders').insertOne(newOrder);
     res.status(201).json(result);
   } catch (err) {
     console.error(err);
@@ -18,8 +39,16 @@ const createOrder = async (req, res) => {
 const getSingle = async (req, res) => {
   //#swagger.tags=['Orders']
   try {
-    const orderId = new ObjectId(req.params.orderId);
-    const result = await mongodb.getDb().collection('orders').findOne({ _id: orderId });
+    const orderId = req.params.orderId;
+    if (!ObjectId.isValid(orderId)) {
+      return res.status(400).json({ error: 'Invalid order ID format' });
+    }
+
+    const result = await mongodb.getDb().collection('orders').findOne({ _id: new ObjectId(orderId) });
+    if (!result) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
     res.status(200).json(result);
   } catch (err) {
     console.error(err);
@@ -44,6 +73,11 @@ const getOrdersByUser = async (req, res) => {
   //#swagger.tags=['Orders']
   try {
     const userId = req.params.userId;
+
+    if (!userId || typeof userId !== 'string') {
+      return res.status(400).json({ error: 'Invalid or missing user ID' });
+    }
+
     const result = await mongodb.getDb().collection('orders').find({ userId }).toArray();
     res.status(200).json(result);
   } catch (err) {
@@ -56,11 +90,25 @@ const getOrdersByUser = async (req, res) => {
 const updateOrder = async (req, res) => {
   //#swagger.tags=['Orders']
   try {
-    const orderId = new ObjectId(req.params.orderId);
+    const orderId = req.params.orderId;
+    if (!ObjectId.isValid(orderId)) {
+      return res.status(400).json({ error: 'Invalid order ID format' });
+    }
+
+    const updateData = req.body;
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ error: 'No update data provided' });
+    }
+
     const result = await mongodb.getDb().collection('orders').updateOne(
-      { _id: orderId },
-      { $set: req.body }
+      { _id: new ObjectId(orderId) },
+      { $set: updateData }
     );
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ error: 'Order not found or no changes made' });
+    }
+
     res.status(200).json(result);
   } catch (err) {
     console.error(err);
@@ -72,9 +120,17 @@ const updateOrder = async (req, res) => {
 const deleteOrder = async (req, res) => {
   //#swagger.tags=['Orders']
   try {
-    const orderId = new ObjectId(req.params.orderId);
-    const result = await mongodb.getDb().collection('orders').deleteOne({ _id: orderId });
-    res.status(200).json(result);
+    const orderId = req.params.orderId;
+    if (!ObjectId.isValid(orderId)) {
+      return res.status(400).json({ error: 'Invalid order ID format' });
+    }
+
+    const result = await mongodb.getDb().collection('orders').deleteOne({ _id: new ObjectId(orderId) });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    res.status(200).json({ message: 'Order deleted successfully' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to delete order' });
