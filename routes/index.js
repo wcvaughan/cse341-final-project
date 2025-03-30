@@ -1,14 +1,17 @@
 // routes/index.js - Main entry point for all route files
 
-// Import required modules (Express and individual route files)
+const express = require('express');
+const router = express.Router();
 
-// Initialize an Express router
+const itemRoutes = require('./item-routes');
+const storeRoutes = require('./store-routes');
+const orderRoutes = require('./order-routes');
+const userRoutes = require('./user-routes');
 
-// Define route groupings and link them to their respective controllers
-// Example:
-// app.use('/item', itemRoutes); // Routes related to items
-// app.use('/store', storeRoutes); // Routes related to stores
-// app.use('/order', orderRoutes); // Routes related to orders
-// app.use('/user', userRoutes); // Routes related to users
+// Group route paths
+router.use('/items', itemRoutes);
+router.use('/stores', storeRoutes);
+router.use('/orders', orderRoutes);
+router.use('/users', userRoutes);
 
-// Export the router for use in the main application
+module.exports = router;

@@ -1,15 +1,27 @@
-const swaggerAutogen = require('swagger-autogen')();
+const swaggerJSDoc = require('swagger-jsdoc');
 
-const doc = {
+const options = {
+  definition: {
+    openapi: '3.0.0',
     info: {
-        title: "Final Project",
-        description: "An application simulating a store management software with features to manage orders, users, items, and stores"
+      title: 'Final Project',
+      version: '1.0.0',
+      description: 'Store management system: users, items, orders, and stores',
     },
-    host: "localhost:3000",
-    schemes: ["http", "https"]
+    servers: [
+      {
+        url: 'http://localhost:3000',
+      },
+    ],
+  },
+  apis: [
+    './routes/item-routes.js',
+    './routes/user-routes.js',
+    './routes/order-routes.js',
+    './routes/store-routes.js',
+  ],
 };
 
-const outputFile = './swagger.json';
-const endpointFiles = ['./routes/index.js'];
+const swaggerSpec = swaggerJSDoc(options);
 
-swaggerAutogen(outputFile, endpointFiles, doc);
+module.exports = swaggerSpec;

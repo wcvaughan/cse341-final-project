@@ -13,7 +13,7 @@ const initDb = (callback) => {
     }
     MongoClient.connect(process.env.MONGODB_URI)
         .then((client) => {
-            database = client;
+            database = client.db();
             callback(null, database);
         })
         .catch((err) => {
@@ -31,5 +31,6 @@ const getDatabase = () => {
 // Export 
 module.exports = {
     initDb,
-    getDatabase
-};
+    getDb: getDatabase
+  };
+  

@@ -1,28 +1,160 @@
-// Order Routes - Chris Vaughan
 const express = require('express');
 const { requiresAuth } = require('express-openid-connect');
-const { getAll, getSingle, createOrder, updateOrder, deleteOrder } = require('../controllers/orders');
-const { validateOrder, validateId, handleValidationErrors } = require('../middleware/validation');
+const {
+  getAll,
+  getSingle,
+  createOrder,
+  updateOrder,
+  deleteOrder,
+  getOrdersByUser
+} = require('../controllers/orders');
+
+const {
+  validateOrder,
+  validateId,
+  validateUser,
+  handleValidationErrors
+} = require('../middleware/validation');
 
 const router = express.Router();
 
-// POST /order - Route to create a new order
+/**
+ * @swagger
+ * tags:
+ *   name: Orders
+ *   description: Order management
+ */
+
+/**
+ * @swagger
+ * /api/orders:
+ *   post:
+ *     summary: Create a new order
+ *     tags: [Orders]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - storeId
+ *               - items
+ *               - totalPrice
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               storeId:
+ *                 type: string
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *               totalPrice:
+ *                 type: number
+ *               status:
+ *                 type: string
+ *               createdAt:
+ *                 type: string
+ *                 format: date-time
+ *     responses:
+ *       201:
+ *         description: Order created
+ */
 router.post('/', requiresAuth(), validateOrder, handleValidationErrors, createOrder);
 
-// GET /order/:orderId - Route to retrieve a specific order by ID
+/**
+ * @swagger
+ * /api/orders/{orderId}:
+ *   get:
+ *     summary: Get an order by ID
+ *     tags: [Orders]
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Order found
+ */
 router.get('/:orderId', requiresAuth(), validateId, handleValidationErrors, getSingle);
 
-// GET /user/ - Route to retrieve all users - admin protected is suggested
+/**
+ * @swagger
+ * /api/orders:
+ *   get:
+ *     summary: Get all orders
+ *     tags: [Orders]
+ *     responses:
+ *       200:
+ *         description: List of orders
+ */
 router.get('/', getAll);
 
-// GET /order/user/:userId - Route to retrieve all orders for a specific user
-router.put('/user/:userId', requiresAuth(), validateId, validateOrder, handleValidationErrors, getOrdersByUser);
+/**
+ * @swagger
+ * /api/orders/user/{userId}:
+ *   get:
+ *     summary: Get all orders by a specific user
+ *     tags: [Orders]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Orders found
+ */
+router.get('/user/:userId', requiresAuth(), validateId, handleValidationErrors, getOrdersByUser);
 
-// PUT /user/:orderId - Route to update order details by ID -- user protected (possibly checking user id against user whose orders are being accessed)
+/**
+ * @swagger
+ * /api/orders/{orderId}:
+ *   put:
+ *     summary: Update an order by ID
+ *     tags: [Orders]
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Order updated
+ */
 router.put('/:orderId', requiresAuth(), validateId, validateUser, handleValidationErrors, updateOrder);
 
-// DELETE /order/:orderId - Route to cancel or delete an order by ID
+/**
+ * @swagger
+ * /api/orders/{orderId}:
+ *   delete:
+ *     summary: Delete an order
+ *     tags: [Orders]
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Order deleted
+ */
 router.delete('/:orderId', requiresAuth(), validateId, handleValidationErrors, deleteOrder);
 
-// Export 
 module.exports = router;

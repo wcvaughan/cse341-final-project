@@ -1,45 +1,78 @@
 // User Controller - Chris Vaughan
+const mongodb = require('../db/connect');
+const ObjectId = require('mongodb').ObjectId;
 
-// POST /user - Register a new user
+// POST /users - Register a new user
 const registerUser = async (req, res) => {
-    //#swagger.tags=['Users']
-
+  //#swagger.tags=['Users']
+  try {
+    const result = await mongodb.getDb().collection('users').insertOne(req.body);
+    res.status(201).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to register user' });
+  }
 };
 
-// GET /user/login - Handle user login
-
-// GET /user/logout - Handle user logout
-
-// GET /user/{userId} - Retrieve details of a specific user by ID
+// GET /users/{userId} - Retrieve a specific user by ID
 const getSingle = async (req, res) => {
-    //#swagger.tags=['Users']
-
+  //#swagger.tags=['Users']
+  try {
+    const userId = new ObjectId(req.params.userId);
+    const result = await mongodb.getDb().collection('users').findOne({ _id: userId });
+    res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch user' });
+  }
 };
 
-// GET /user - Retrieve all users -- admin protected
+// GET /users - Retrieve all users
 const getAll = async (req, res) => {
-    //#swagger.tags=['Users']
-
+  //#swagger.tags=['Users']
+  try {
+    const result = await mongodb.getDb().collection('users').find().toArray();
+    res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
 };
 
-// PUT /user/{userId} - Update user details by ID
+// PUT /users/{userId} - Update a user by ID
 const updateUser = async (req, res) => {
-    //#swagger.tags=['Users']
-
+  //#swagger.tags=['Users']
+  try {
+    const userId = new ObjectId(req.params.userId);
+    const result = await mongodb.getDb().collection('users').updateOne(
+      { _id: userId },
+      { $set: req.body }
+    );
+    res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update user' });
+  }
 };
 
-// DELETE /user/{userId} - Remove a user by ID
+// DELETE /users/{userId} - Remove a user by ID
 const deleteUser = async (req, res) => {
-    //#swagger.tags=['Users']
-
+  //#swagger.tags=['Users']
+  try {
+    const userId = new ObjectId(req.params.userId);
+    const result = await mongodb.getDb().collection('users').deleteOne({ _id: userId });
+    res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete user' });
+  }
 };
 
-// Export 
-
+// Export
 module.exports = {
-    registerUser,
-    getSingle,
-    getAll,
-    updateUser,
-    deleteUser
+  registerUser,
+  getSingle,
+  getAll,
+  updateUser,
+  deleteUser
 };
