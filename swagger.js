@@ -11,6 +11,7 @@ const options = {
     servers: [
       {
         url: 'http://localhost:3000',
+        url: 'https://cse341-node-r7l4.onrender.com'
       },
     ],
   },
