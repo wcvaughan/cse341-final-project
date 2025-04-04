@@ -9,7 +9,7 @@ const {
 
 const {
   validateUser,
-  validateId,
+  validateUserId,
   handleValidationErrors
 } = require('../middleware/validation');
 
@@ -81,7 +81,7 @@ router.post('/', isAuthenticated, validateUser, handleValidationErrors, register
  *       200:
  *         description: User found
  */
-router.get('/:userId', validateId, handleValidationErrors, getSingle);
+router.get('/:userId', validateUserId, handleValidationErrors, getSingle);
 
 /**
  * @swagger
@@ -136,7 +136,7 @@ router.get('/', getAll);
  *       200:
  *         description: User updated
  */
-router.put('/:userId', isAuthenticated, validateId, validateUser, handleValidationErrors, updateUser);
+router.put('/:userId', isAuthenticated, validateUserId, validateUser, handleValidationErrors, updateUser);
 
 /**
  * @swagger
@@ -156,6 +156,6 @@ router.put('/:userId', isAuthenticated, validateId, validateUser, handleValidati
  *       200:
  *         description: User deleted
  */
-router.delete('/:userId', isAuthenticated, validateId, handleValidationErrors, deleteUser);
+router.delete('/:userId', isAuthenticated, validateUserId, handleValidationErrors, deleteUser);
 
 module.exports = router;

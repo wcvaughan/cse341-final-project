@@ -7,6 +7,13 @@ const {
   getItemById,
   deleteItem
 } = require('../controllers/items');
+
+const {
+  validateItem,
+  validateItemId,
+  handleValidationErrors
+} = require('../middleware/validation');
+
 const { isAuthenticated } = require('../middleware/authenticate');
 
 /**
@@ -44,7 +51,7 @@ router.get('/', getAllItems);
  *       200:
  *         description: Item found
  */
-router.get('/:itemId', getItemById);
+router.get('/:itemId', validateItemId, handleValidationErrors, getItemById);
 
 /**
  * @swagger
@@ -101,7 +108,7 @@ router.get('/:itemId', getItemById);
  *       201:
  *         description: Item created
  */
-router.post('/', isAuthenticated, createItem);
+router.post('/', isAuthenticated, validateItem, handleValidationErrors, createItem);
 
 /**
  * @swagger
@@ -155,7 +162,7 @@ router.post('/', isAuthenticated, createItem);
  *       200:
  *         description: Item updated
  */
-router.put('/:itemId', isAuthenticated, updateItem);
+router.put('/:itemId', isAuthenticated, validateItemId, handleValidationErrors, updateItem);
 
 /**
  * @swagger
@@ -175,6 +182,6 @@ router.put('/:itemId', isAuthenticated, updateItem);
  *       200:
  *         description: Item deleted
  */
-router.delete('/:itemId', isAuthenticated, deleteItem);
+router.delete('/:itemId', isAuthenticated, validateItemId,handleValidationErrors, deleteItem);
 
 module.exports = router;

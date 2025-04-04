@@ -10,7 +10,8 @@ const {
 
 const {
   validateOrder,
-  validateId,
+  validateOrderId,
+  validateUserId,
   validateUser,
   handleValidationErrors
 } = require('../middleware/validation');
@@ -97,7 +98,7 @@ router.post('/', isAuthenticated, validateOrder, handleValidationErrors, createO
  *       200:
  *         description: Order found
  */
-router.get('/:orderId', validateId, handleValidationErrors, getSingle);
+router.get('/:orderId', validateOrderId, handleValidationErrors, getSingle);
 
 /**
  * @swagger
@@ -127,7 +128,7 @@ router.get('/', getAll);
  *       200:
  *         description: Orders found
  */
-router.get('/user/:userId', validateId, handleValidationErrors, getOrdersByUser);
+router.get('/user/:userId', validateUserId, handleValidationErrors, getOrdersByUser);
 
 /**
  * @swagger
@@ -159,7 +160,7 @@ router.get('/user/:userId', validateId, handleValidationErrors, getOrdersByUser)
  *       200:
  *         description: Order updated
  */
-router.put('/:orderId', isAuthenticated, validateId, validateUser, handleValidationErrors, updateOrder);
+router.put('/:orderId', isAuthenticated, validateOrderId, validateUser, handleValidationErrors, updateOrder);
 
 /**
  * @swagger
@@ -179,6 +180,6 @@ router.put('/:orderId', isAuthenticated, validateId, validateUser, handleValidat
  *       200:
  *         description: Order deleted
  */
-router.delete('/:orderId', isAuthenticated, validateId, handleValidationErrors, deleteOrder);
+router.delete('/:orderId', isAuthenticated, validateOrderId, handleValidationErrors, deleteOrder);
 
 module.exports = router;
