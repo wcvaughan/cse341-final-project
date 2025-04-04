@@ -160,7 +160,7 @@ router.get('/user/:userId', validateUserId, handleValidationErrors, getOrdersByU
  *       200:
  *         description: Order updated
  */
-router.put('/:orderId', isAuthenticated, validateOrderId, validateUser, handleValidationErrors, updateOrder);
+router.put('/:orderId', isAuthenticated, validateOrderId, handleValidationErrors, updateOrder);
 
 /**
  * @swagger
