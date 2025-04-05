@@ -13,6 +13,7 @@ const {
   validateOrderId,
   validateUserId,
   validateUser,
+  validateStoreId,
   handleValidationErrors
 } = require('../middleware/validation');
 
@@ -80,7 +81,7 @@ const router = express.Router();
  *       201:
  *         description: Order created
  */
-router.post('/', isAuthenticated, validateOrder, handleValidationErrors, createOrder);
+router.post('/', isAuthenticated, validateOrder, validateUserId, validateStoreId, handleValidationErrors, createOrder);
 
 /**
  * @swagger
@@ -160,7 +161,7 @@ router.get('/user/:userId', validateUserId, handleValidationErrors, getOrdersByU
  *       200:
  *         description: Order updated
  */
-router.put('/:orderId', isAuthenticated, validateOrderId, handleValidationErrors, updateOrder);
+router.put('/:orderId', isAuthenticated, validateOrderId, validateUserId, validateStoreId, handleValidationErrors, updateOrder);
 
 /**
  * @swagger
