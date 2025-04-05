@@ -12,6 +12,7 @@ const {
   validateOrder,
   validateOrderId,
   validateUserIdBody,
+  validateUserIdParam,
   validateStoreIdBody,
   handleValidationErrors
 } = require('../middleware/validation');
@@ -128,7 +129,7 @@ router.get('/', getAll);
  *       200:
  *         description: Orders found
  */
-router.get('/user/:userId', validateUserIdBody, handleValidationErrors, getOrdersByUser);
+router.get('/user/:userId', validateUserIdParam, handleValidationErrors, getOrdersByUser);
 
 /**
  * @swagger
