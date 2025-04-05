@@ -1,4 +1,4 @@
-const { check, param, validationResult } = require('express-validator');
+const { check, param, body, validationResult } = require('express-validator');
 
 // Implement data validation for each model
 

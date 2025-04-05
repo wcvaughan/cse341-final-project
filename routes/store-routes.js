@@ -10,7 +10,7 @@ const {
 
 const {
   validateStore,
-  validateStoreId,
+  validateStoreIdParam,
   handleValidationErrors
 } = require('../middleware/validation');
 
@@ -51,7 +51,7 @@ router.get('/', getAllStores);
  *       200:
  *         description: Store found
  */
-router.get('/:storeId', validateStoreId, handleValidationErrors, getStoreById);
+router.get('/:storeId', validateStoreIdParam, handleValidationErrors, getStoreById);
 
 /**
  * @swagger
@@ -144,7 +144,7 @@ router.post('/', isAuthenticated, validateStore, handleValidationErrors, createS
  *       200:
  *         description: Store updated
  */
-router.put('/:storeId', isAuthenticated, validateStoreId, handleValidationErrors, updateStore);
+router.put('/:storeId', isAuthenticated, validateStoreIdParam, handleValidationErrors, updateStore);
 
 /**
  * @swagger
@@ -164,6 +164,6 @@ router.put('/:storeId', isAuthenticated, validateStoreId, handleValidationErrors
  *       200:
  *         description: Store deleted
  */
-router.delete('/:storeId', isAuthenticated, validateStoreId, handleValidationErrors, deleteStore);
+router.delete('/:storeId', isAuthenticated, validateStoreIdParam, handleValidationErrors, deleteStore);
 
 module.exports = router;

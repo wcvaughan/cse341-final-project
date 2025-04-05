@@ -128,7 +128,7 @@ router.get('/', getAll);
  *       200:
  *         description: Orders found
  */
-router.get('/user/:userId', validateUserId, handleValidationErrors, getOrdersByUser);
+router.get('/user/:userId', validateUserIdBody, handleValidationErrors, getOrdersByUser);
 
 /**
  * @swagger
