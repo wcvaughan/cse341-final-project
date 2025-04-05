@@ -4,7 +4,6 @@ const { check, param, validationResult } = require('express-validator');
 
 // Item validation
 const validateItem = [
-  check('itemId').notEmpty().withMessage('itemId is required'),
   check('name').notEmpty().withMessage('name is required'),
   check('category').notEmpty().withMessage('category is required'),
   check('price').isFloat({ gt: 0 }).withMessage('price must be a positive number'),
@@ -23,7 +22,6 @@ const validateOrder = [
 
 // Store validation
 const validateStore = [
-  check('storeId').notEmpty().withMessage('storeId is required'),
   check('name').notEmpty().withMessage('name is required'),
   check('location').notEmpty().withMessage('location is required'),
   check('hours').notEmpty().withMessage('hours are required'),
@@ -33,7 +31,6 @@ const validateStore = [
 
 // User validation
 const validateUser = [
-  check('userId').notEmpty().withMessage('userId is required'),
   check('name').notEmpty().withMessage('name is required'),
   check('email').isEmail().withMessage('Valid email is required'),
   check('role').isIn(['admin', 'customer']).withMessage('role must be admin or customer'),
