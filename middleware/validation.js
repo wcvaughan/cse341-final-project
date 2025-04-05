@@ -44,11 +44,17 @@ const validateItemId = [
 const validateOrderId = [
   param('orderId').isMongoId().withMessage('Invalid ID format')
 ];
-const validateStoreId = [
+const validateStoreIdParam = [
   param('storeId').isMongoId().withMessage('Invalid ID format')
 ];
-const validateUserId = [
+const validateStoreIdBody = [
+  body('storeId').isMongoId().withMessage('Invalid ID format')
+];
+const validateUserIdParam = [
   param('userId').isMongoId().withMessage('Invalid ID format')
+];
+const validateUserIdBody = [
+  body('userId').isMongoId().withMessage('Invalid ID format')
 ];
 
 // Validation error handler
@@ -68,7 +74,9 @@ module.exports = {
   validateUser,
   validateItemId,
   validateOrderId,
-  validateStoreId,
-  validateUserId,
+  validateStoreIdParam,
+  validateStoreIdBody,
+  validateUserIdParam,
+  validateUserIdBody,
   handleValidationErrors
 };
